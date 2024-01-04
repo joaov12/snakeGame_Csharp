@@ -1,23 +1,18 @@
 ﻿using SnakeGameCsharp.enums;
 using SnakeGameCsharp.game;
-using System;
-
 
 const int larguraTela = 69;
 const int alturaTela = 29;
-const string caractereCobra = "+=+";
+const string caractereCobra = "■";
 
 string[,] tela = new string[larguraTela, alturaTela];
 bool jogoRodando = true;
-
 List<Coordenada> coordenadasCobra = new();
 Direcao direcao = Direcao.Direita;
 int placar = 0;
 Random random = new();
 
 IniciarJogo();
-
-
 
 void IniciarJogo()
 {
@@ -31,13 +26,14 @@ void IniciarJogo()
         TransladarCobra();
         Renderizar();
     }
+
     FimDeJogo();
 }
 
 void FimDeJogo()
 {
     Console.Clear();
-    Console.WriteLine("FIM DE JOGO! PONTUAÇÃO:" + placar);
+    Console.WriteLine("Fim de jogo, pontuação: " + placar);
 }
 
 void Renderizar()
@@ -67,16 +63,79 @@ void Renderizar()
 
 void TransladarCobra()
 {
-    throw new NotImplementedException();
+    var cabeca = coordenadasCobra[0];
+    var coordenadaRaboX = coordenadasCobra[^1].X;
+    var coordenadaRaboY = coordenadasCobra[^1].Y;
+
+    for (int i = coordenadasCobra.Count - 1; i > 0; i--)
+    {
+        coordenadasCobra[i].X = coordenadasCobra[i - 1].X;
+        coordenadasCobra[i].Y = coordenadasCobra[i - 1].Y;
+    }
+
+    if (direcao is Direcao.Direita)
+    {
+        cabeca.X += 1;
+
+        if (cabeca.X > larguraTela - 1)
+        {
+            cabeca.X = 0;
+        }
+    }
+
+    if (direcao is Direcao.Esquerda)
+    {
+        cabeca.X--;
+
+        if (cabeca.X < 0)
+        {
+            cabeca.X = larguraTela - 1;
+        }
+    }
+
+    if (direcao is Direcao.Cima)
+    {
+        cabeca.Y--;
+
+        if (cabeca.Y < 0)
+        {
+            cabeca.Y = alturaTela - 1;
+        }
+    }
+
+    if (direcao is Direcao.Baixo)
+    {
+        cabeca.Y++;
+
+        if (cabeca.Y > alturaTela - 1)
+        {
+            cabeca.Y = 0;
+        }
+    }
+
+    if (tela[cabeca.X, cabeca.Y] == "*")
+    {
+        placar += random.Next(1, 10);
+        coordenadasCobra.Add(new Coordenada(coordenadaRaboX, coordenadaRaboY));
+        CriarComida();
+    }
+
+    if (tela[cabeca.X, cabeca.Y] == caractereCobra)
+    {
+        jogoRodando = false;
+        return;
+    }
+
+    AtualizarPosicaoCobra();
 }
 
 void LerTeclas()
 {
-    Thread task = new(LerAcaoTecla);
+    Thread task = new(LerAcaoDaTecla);
     task.Start();
 }
 
-void LerAcaoTecla()
+void LerAcaoDaTecla()
 {
     while (jogoRodando)
     {
@@ -107,10 +166,11 @@ void LerAcaoTecla()
 void CriarComida()
 {
     int aleatorioX, aleatorioY;
+
     do
     {
-        aleatorioX = random.Next(0, alturaTela);
-        aleatorioY = random.Next(0, larguraTela);
+        aleatorioX = random.Next(0, larguraTela);
+        aleatorioY = random.Next(0, alturaTela);
     } while (tela[aleatorioX, aleatorioY] is not null or " ");
 
     tela[aleatorioX, aleatorioY] = "*";
@@ -118,19 +178,18 @@ void CriarComida()
 
 void CriarCobra()
 {
-    coordenadasCobra.Add(new Coordenada(7,14));
-    coordenadasCobra.Add(new Coordenada(7, 14));
+    coordenadasCobra.Add(new Coordenada(9, 14));
+    coordenadasCobra.Add(new Coordenada(8, 14));
     coordenadasCobra.Add(new Coordenada(7, 14));
 
     AtualizarPosicaoCobra();
-
 }
 
 void AtualizarPosicaoCobra()
 {
-    for(int l = 0; l < larguraTela; l++)
+    for (int l = 0; l < larguraTela; l++)
     {
-        for(int a = 0; a < alturaTela; a++)
+        for (int a = 0; a < alturaTela; a++)
         {
             var posicaoDeveConterCobra = coordenadasCobra.Any(coordenada => coordenada.X == l && coordenada.Y == a);
 
@@ -140,7 +199,7 @@ void AtualizarPosicaoCobra()
                 continue;
             }
 
-            if (tela[l,a] == caractereCobra)
+            if (tela[l, a] == caractereCobra)
             {
                 tela[l, a] = " ";
             }
