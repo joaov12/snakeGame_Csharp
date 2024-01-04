@@ -36,12 +36,33 @@ void IniciarJogo()
 
 void FimDeJogo()
 {
-    throw new NotImplementedException();
+    Console.Clear();
+    Console.WriteLine("FIM DE JOGO! PONTUAÇÃO:" + placar);
 }
 
 void Renderizar()
 {
-    throw new NotImplementedException();
+    Console.Clear();
+    var telaASerRenderizada = "";
+
+    for (int a = 0; a < alturaTela; a++)
+    {
+        for (int l = 0; l < larguraTela; l++)
+        {
+            if (tela[l, a] is not null or " ")
+            {
+                telaASerRenderizada += tela[l, a];
+            }
+            else
+            {
+                telaASerRenderizada += " ";
+            }
+        }
+
+        telaASerRenderizada += "\n";
+    }
+
+    Console.Write(telaASerRenderizada);
 }
 
 void TransladarCobra()
