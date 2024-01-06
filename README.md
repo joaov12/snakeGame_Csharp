@@ -30,7 +30,6 @@ Jogo simples da cobrinha (Snake Game) desenvolvido com C# puro para ser jogado n
 ![Texto Alternativo](./assets/videoreadme.gif)
 
 
-
 ## 📜 Requisitos
 - Ambiente de desenvolvimento C#.
 
